@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>GarageGuru</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</head>
+<body>
+<header class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper">
+      <ul>
+        <!-- <li><a href="/" class="left brand-logo">&nbsp;&nbsp;GarageGuru</a></li> -->
+          <li><a href="/"><img src="{% static '/img/logo.png' %}" id="logo"></a></li>
+      </ul>
+
+      <form id="search-form" action="{% url 'search_by_hashtag' hashtag='placeholder' %}" method="get">
+        <input type="text" id="hashtag" name="hashtag" placeholder="Search for posts by hashtag">
+        <button type="submit"><i class="fa fa-search"></i></button>
+      </form>
+
+      <ul class="right">
+
+    <ul id="dropdown1" class="dropdown-content">
+      <li><a href="{% url 'home' %}">Home<i class="material-icons right">home</i></a></li>
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'posts_create' %}">Add Post<i class="material-icons right">add</i></a></li>
+      <li><a href="/messages">Messages<i class="material-icons right">message</i></a></li>
+      <li><a href="{% url 'profile' user.id %}">Profile<i class="material-icons right">account_circle</i></a></li>
+      <li><a href="{% url 'logout' %}">Log Out<i class="material-icons right">exit_to_app</i></a></li>
+      {% else %}
+      <li><a href="{% url 'login' %}">Log In<i class="material-icons right">login</i></a></li>
+      <li><a href="{% url 'signup' %}">Sign Up<i class="material-icons right">person_add</i></a></li>
+      {% endif %}
+    </ul>
+      <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons right">menu</i></a></li>
+
+      </ul>
+    </div>
+  </nav>
+</header>
+  
+  <main class="container">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer class="page-footer">
+    <div class="right">All Rights Reserved, &copy; 2023 GarageGuru &nbsp;</div>
+  </footer>
+
+</body>
+
+<script>
+  const searchForm = document.querySelector('#search-form');
+  const hashtagInput = document.querySelector('#hashtag');
+
+  hashtagInput.addEventListener('input', () => {
+    const hashtag = hashtagInput.value;
+    const actionUrl = `{% url 'search_by_hashtag' hashtag='placeholder' %}`.replace('placeholder', encodeURIComponent(hashtag));
+    searchForm.setAttribute('action', actionUrl);
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+      var elems = document.querySelectorAll('.dropdown-trigger');
+      var instances = M.Dropdown.init(elems);
+  });
+
+</script>
+
+</html>

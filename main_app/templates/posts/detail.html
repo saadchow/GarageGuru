@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Post Details</h1>
+
+<div class="card">
+  <div class="card-content">
+    <span class="card-title">{{ post.name }}</span>
+    <p>{{ post.description }}</p><br><br>
+    {% if user.id in post.like_list_generator %}
+    <form action="{% url 'add_like_detail' post.id user.id %}" method="post">
+        {% csrf_token %}
+        <!-- <button type="submit">Unlike</button> -->
+  <button class="btn waves-effect waves-light" type="submit" name="action">
+    <i class="material-icons dp48 center">favorite</i>
+  </button>
+    </form>
+    {% else %}  
+    <form action="{% url 'add_like_detail' post.id user.id %}" method="post">
+        {% csrf_token %}
+        <!-- <button type="submit">Like</button> -->
+  <button class="btn waves-effect waves-light" type="submit" name="action">
+    <i class="material-icons dp48 center">favorite_border</i>
+  </button>
+    </form>
+    {% endif %}
+    <a href="/posts/{{ post.id }}/likes"><p>{{ post.like_set.count }} Likes</p></a>
+  </div>
+
+  {% if post.user_id == request.user.id %}
+  <div class="card-action">
+    <a href="{% url 'posts_update' post.id %}">Edit</a>
+    <a href="{% url 'posts_delete' post.id %}">Delete</a>
+  </div>
+  {% endif %}
+  </div>
+
+  {% for photo in post.photo_set.all %}
+    <img class="responsive-img card-panel" src="{{photo.url}}">
+    {% if post.user_id == request.user.id %}
+    <form action="{% url 'delete_photo' post.id photo.id %}" method="POST">
+      {% csrf_token %}
+      <!-- <input type="submit" class="btn" value="Delete photo"> -->
+  <button class="btn waves-effect waves-light" type="submit" name="action">Delete Photo
+    <i class="material-icons dp48 right">delete</i>
+  </button><br><br>
+    </form> 
+    {% endif %}
+  {% empty %}
+    <div class="card-panel teal-text center-align">No Photos Uploaded</div>
+  {% endfor %}
+ 
+{% if post.user_id == request.user.id %}
+<form action="{% url 'add_photo' post.id %}" enctype="multipart/form-data" method="POST" class="card-panel">
+  {% csrf_token %}
+  <input type="file" name="photo-file" required>
+  <br><br>
+  <!-- <input type="submit" class="btn" value="Upload Photo"> -->
+  <button class="btn waves-effect waves-light" type="submit" name="action">Add Photo
+    <i class="material-icons dp48 right">add_a_photo</i>
+  </button>
+</form>
+{% endif %}
+
+<form action="{% url 'add_comment' post.id user.id%}" method="post">
+  {% csrf_token %}
+  {{ comment_form.as_p }}
+  <!-- <input type="submit" class="btn" value="Add Comment"> -->
+  <button class="btn waves-effect waves-light" type="submit" name="action">Add Comment
+    <i class="material-icons dp48 right">comment</i>
+  </button>
+</form>
+
+
+
+<h4>Comments:</h4>
+{% if not post.comment_set.all %}
+  <h6>Be the first to comment!</h6>
+{% endif %}
+{% for comment in post.comment_set.all %}
+<div class="card">
+  <a href="{% url 'profile' comment.user.id %}">
+  <div class="card-title" style="margin: 0 0 0 10px;">{{comment.user.username}}</div>
+  </a>
+  <div class="card-content">{{comment.comment}}</div>
+  <div class="card-action">
+    <a href="{% url 'comment_delete' post.id comment.id %}">Delete</a>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

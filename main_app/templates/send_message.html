@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Send a message</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="recipient">Recipient (Username):</label><br>
+    <input type="text" id="recipient" name="recipient"><br><br>
+    <label for="content">Content:</label><br>
+    <textarea id="content" name="content"></textarea><br><br>
+    <!-- <input type="submit" value="Send"> -->
+  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    <i class="material-icons right">send</i>
+  </button>
+</form>
+
+{% endblock %}

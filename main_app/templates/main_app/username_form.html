@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form action="{% url 'username_updated' user.id %}" method="post">
+    {% csrf_token %}
+    <table>
+      <label>New Username:</label>
+      <input type="text" name="username" required maxlength="100">
+    </table>
+    <input type="submit" value="Submit!" class="btn">
+  </form>
+{% endblock %}

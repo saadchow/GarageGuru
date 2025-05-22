@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+        {% block content %}
+            <h1>Search Results for: {{ hashtag }}</h1>
+
+            {% if not posts %}
+                <p>No results found for {{ hashtag }}.</p>
+            {% else %}
+            {% for post in posts %}
+                <div class="row">
+                    <a href="{% url 'detail' post.id %}">
+                        <div class="col s8 m6 offset-s2 offset-m3">
+                            <div class="card">
+                                <!-- <a href="{% url 'profile' post.user.id %}"> -->
+                                <span class="card-title">{{post.user.username}}</span>
+                                <!-- </a> -->
+                                <div class="card-image">
+                                    <img src="">
+                                    <!-- <p>image goes here</p> -->
+                                    {% for photo in post.photo_set.all %}
+                                    <img class="responsive-img card-panel" src="{{photo.url}}">
+                                    {% empty %}
+                                    <div class="card-panel teal-text center-align">No Photos Uploaded</div>
+                                    {% endfor %}
+                                </div>
+                                <div class="card-content">
+                                    <p>Description: {{ post.description }}</p>
+                                    {% if user.is_authenticated %}
+                                    {% if user.id in post.like_list_generator %}
+                                    <form action="{% url 'add_like' post.id user.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit">Unlike</button>
+                                    </form>
+                                    {% else %}
+                                    <form action="{% url 'add_like' post.id user.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit">Like</button>
+                                    </form>
+                                    {% endif %}
+                                    {% endif %}
+                                    <a href="/posts/{{ post.id }}/likes">
+                                        <p>{{ post.like_set.count }} Likes</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

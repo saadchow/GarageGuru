@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="center align">PROFILE</h1>
+
+
+
+<div class="row">
+    <div class="col s2 card profile-photo"> 
+      {% if profile_photo %}
+        <img class="responsive-img" src="{{profile_photo.url}}">
+      {% else %}
+        <div class="card-panel teal-text center-align">No Photo Uploaded</div>
+      {% endif %}
+      </div>
+    <div class="col s1"></div>
+    <div class="col s8 m6 card">
+        <div class="card-title center-align">{{user_profile.username}}</div>
+        <div class="card-content">
+            {% if posts.count == 1 %}
+                <div class="center-align">{{posts.count}} Post</div>
+            {% else %}
+                <div class="center-align">{{posts.count}} Posts</div>
+            {% endif %}
+            <!-- <div class="col s3">XX followers</div>
+            <div class="col s3">XX Following</div> -->
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col s8 m6 offset-s4 offset-m3 card">
+        <div class="card-title">Bio:</div>
+        <div class="card-content">{{bio.description}}</div>
+    </div>
+</div>
+
+
+{% if request.user.id == user_profile.id %}
+<div class="row">
+    <div class="col s8 m6 offset-s4 offset-m3 card">
+        <div class="card-title">Profile Settings</div>
+        <div class="card-action" style="text-align: center;">
+            <a class="btn" href="{% url 'username_update' user.id %}">Change Username</a>
+            <a class="btn" href="{% url 'bio_update' user.id %}">Change Bio</a>
+            <!-- <a class="btn" href="{% url 'user_photo_update' user.id %}">Change Profile Picture</a> -->
+            <form action="{% url 'user_photo_update' user.id %}" enctype="multipart/form-data" method="POST" class="card-panel">
+                {% csrf_token %}
+                <input type="file" name="user_photo-file">
+                <br><br>
+                <input type="submit" class="btn" value="Change Profile Picture">
+              </form>
+        </div>
+</div>
+{% endif %}
+
+{% for post in posts %}
+    <div class="row">
+            <div class="col s8 m6 offset-s2 offset-m3">
+                <div class="card">
+                    <a href="{% url 'profile' post.user.id %}">
+                        <span class="card-title" style="margin: 0 0 0 10px;">{{post.user.username}}</span>
+                    </a>
+                    <a href="{% url 'detail' post.id %}">
+                    <div class="card-image">
+                        <img src="">
+                        <!-- <p>image goes here</p> -->
+                        {% for photo in post.photo_set.all %}
+                          <img class="responsive-img card-panel" src="{{photo.url}}">
+                        {% empty %}
+                          <div class="card-panel teal-text center-align">No Photos Uploaded</div>
+                        {% endfor %}
+                    </div>
+                    <div class="card-content">
+                        <p>{{ post.description }}</p>
+                        {% if user.is_authenticated %} 
+                        {% if user.id in post.like_list_generator %}
+                            <form action="{% url 'add_like' post.id user.id %}" method="post">
+                                {% csrf_token %}
+                                <!-- <button type="submit">Unlike</button> -->
+                                <button class="btn waves-effect waves-light right" type="submit" name="action">
+                                    <i class="material-icons dp48 center">favorite</i>
+                                </button>
+                            </form>
+                        {% else %}  
+                            <form action="{% url 'add_like' post.id user.id %}" method="post">
+                                {% csrf_token %}
+                                <!-- <button type="submit">Like</button> -->
+                                <button class="btn waves-effect waves-light right" type="submit" name="action">
+                                    <i class="material-icons dp48 center">favorite_border</i>
+                                </button>
+                            </form>
+                        {% endif %}
+                        {% endif %}
+                        {% if post.like_set.count == 1 %}
+                        <a href="/posts/{{ post.id }}/likes" style="text-align: right;"><p style="margin: 8px 75px 0 0;">{{ post.like_set.count }} Like</p></a>
+                        {% else %}
+                        <a href="/posts/{{ post.id }}/likes" style="text-align: right;"><p style="margin: 8px 75px 0 0;">{{ post.like_set.count }} Likes</p></a>
+                        {% endif %}
+                    </div>
+                    </a>
+                </div>
+            </div>
+    </div>
+{% endfor %}
+
+
+
+
+{% endblock %}

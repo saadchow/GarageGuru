@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form action="{% url 'bio_updated' user.id %}" method="post">
+    {% csrf_token %}
+    <table>
+      <label>New Bio:</label>
+      <input type="text" name="description" required maxlength="10000">
+    </table>
+    <input type="submit" value="Submit!" class="btn">
+  </form>
+{% endblock %}
