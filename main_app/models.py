@@ -8,7 +8,7 @@ class UserDescription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class UserPhoto(models.Model):
-    image = CloudinaryField('image')
+    image = CloudinaryField('image', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
         return f"Photo for user_id: {self.user_id} @{self.image.url}"
