@@ -40,9 +40,14 @@
       <li>
         <form action="{% url 'logout' %}" method="post" style="display:inline;">
           {% csrf_token %}
-          <button type="submit" style="background:none;border:none;padding:0;margin:0;color:inherit;cursor:pointer;">
-            Log Out<i class="material-icons right">exit_to_app</i>
+          <button 
+            type="submit" 
+            class="waves-effect blue-text"
+            style="background:none;border:none;padding:8px 16px;display:flex;align-items:center;width:100%;color:#1976d2;"
+          >
+            Log Out <i class="material-icons right" style="color:#1976d2;">exit_to_app</i>
           </button>
+
         </form>
       </li>
       {% else %}
