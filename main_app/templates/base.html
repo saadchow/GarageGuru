@@ -36,7 +36,15 @@
       <li><a href="{% url 'posts_create' %}">Add Post<i class="material-icons right">add</i></a></li>
       <li><a href="/messages">Messages<i class="material-icons right">message</i></a></li>
       <li><a href="{% url 'profile' user.id %}">Profile<i class="material-icons right">account_circle</i></a></li>
-      <li><a href="{% url 'logout' %}">Log Out<i class="material-icons right">exit_to_app</i></a></li>
+      <!-- LOGOUT BUTTON AS FORM: -->
+      <li>
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" style="background:none;border:none;padding:0;margin:0;color:inherit;cursor:pointer;">
+            Log Out<i class="material-icons right">exit_to_app</i>
+          </button>
+        </form>
+      </li>
       {% else %}
       <li><a href="{% url 'login' %}">Log In<i class="material-icons right">login</i></a></li>
       <li><a href="{% url 'signup' %}">Sign Up<i class="material-icons right">person_add</i></a></li>
