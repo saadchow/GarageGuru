@@ -44,13 +44,8 @@
         <div class="card-action" style="text-align: center;">
             <a class="btn" href="{% url 'username_update' user.id %}">Change Username</a>
             <a class="btn" href="{% url 'bio_update' user.id %}">Change Bio</a>
-            <!-- <a class="btn" href="{% url 'user_photo_update' user.id %}">Change Profile Picture</a> -->
-            <form action="{% url 'user_photo_update' user.id %}" enctype="multipart/form-data" method="POST" class="card-panel">
-                {% csrf_token %}
-                <input type="file" name="image">
-                <br><br>
-                <input type="submit" class="btn" value="Change Profile Picture">
-            </form>
+            <a class="btn" href="{% url 'user_photo_update' user.id %}">Change Profile Picture</a>
+
         </div>
 </div>
 {% endif %}

@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import UserManager
 from .forms import PostForm, PhotoForm
 from django.http import HttpResponse
+from .forms import UserPhotoForm  # ensure this import is at the top
 
 from .models import Post, Photo, Comment, Like, User, UserDescription, Message, UserPhoto
 from .forms import CommentForm
@@ -235,3 +236,15 @@ def user_photo_update(request, user_id):
             return HttpResponse(form.errors, status=400)
     return redirect('profile', user_id=user_id)
 
+@login_required
+def user_photo_update(request, user_id):
+    if request.method == 'POST':
+        form = UserPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_photo, created = UserPhoto.objects.get_or_create(user_id=user_id)
+            user_photo.image = form.cleaned_data['image']
+            user_photo.save()
+            return redirect('profile', user_id=user_id)
+    else:
+        form = UserPhotoForm()
+    return render(request, 'main_app/user_photo_form.html', {'form': form})
