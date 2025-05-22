@@ -1,13 +1,23 @@
+from django.contrib import messages as django_messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages as django_messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import UserManager
 
 from .models import Post, Photo, Comment, Like, User, UserDescription, Message, UserPhoto
 from .forms import PostForm, PhotoForm, CommentForm  # Add UserPhotoForm if you have it!
 
-# Homepage showing all posts
+import uuid
+import boto3
+
+S3_BASE_URL = 'https://s3-us-east-2.amazonaws.com/'
+BUCKET = 'garageguru57'
+
 def home(request):
     posts = Post.objects.all()
     return render(request, 'home.html', {'posts': posts})
@@ -131,5 +141,54 @@ def likes_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, 'likes/detail.html', {'post': post})
 
-# (Other views like username_update, bio_update, messages, send_message, etc, remain as before.)
-# Make sure not to duplicate function names!
+# -- MESSAGING SYSTEM: (keeps your inbox & send views) --
+@login_required
+def messages(request):
+    # This shows inbox of messages where you are recipient
+    received_messages = Message.objects.filter(recipient=request.user)
+    return render(request, 'messages.html', {'messages': received_messages})
+
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        recipient_username = request.POST['recipient']
+        content = request.POST['content']
+        try:
+            recipient = User.objects.get(username=recipient_username)
+        except User.DoesNotExist:
+            django_messages.error(
+                request, f'User with username {recipient_username} does not exist.')
+            return redirect('send_message')
+        # Create new Message object
+        message = Message(sender=request.user, recipient=recipient, content=content)
+        message.save()
+        django_messages.success(request, 'Message sent successfully!')
+        return redirect('messages')
+    return render(request, 'send_message.html')
+
+# -- Optional: username/bio update views, etc. (keep as you need) --
+def username_update(request, user_id):
+    return render(request, 'main_app/username_form.html')
+
+def username_updated(request, user_id):
+    this_user = User.objects.get(id=user_id)
+    this_user.username = request.POST['username']
+    for user in User.objects.values():
+        if user['username'] == request.POST['username']:
+            return redirect('username_update', user_id=user_id)
+    this_user.save()
+    return redirect('profile', user_id=user_id)
+
+def bio_update(request, user_id):
+    return render(request, 'main_app/bio_form.html')
+
+def bio_updated(request, user_id):
+    if not UserDescription.objects.filter(user_id=user_id).exists():
+        this_user = UserDescription(description=request.POST['description'], user_id=user_id)
+        this_user.save()
+        return redirect('profile', user_id=user_id)
+    else:
+        this_user = UserDescription.objects.get(user_id=user_id)
+        this_user.description = request.POST['description']
+        this_user.save()
+        return redirect('profile', user_id=user_id)
