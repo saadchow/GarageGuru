@@ -25,7 +25,7 @@ SECRET_KEY = '-le4#3p)vh&t&h#a)+)38779*j^i1l^3t+u1(bo-%wiq5_4=(3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['garageguru-app-f23525b74cd1.herokuapp.com/']
+ALLOWED_HOSTS = ['garageguru-app-f23525b74cd1.herokuapp.com']
 
 import environ
 environ.Env()
@@ -123,6 +123,10 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+
+
 
 # Add this variable to specify where successful logins should redirect to
 LOGIN_REDIRECT_URL = '/'
