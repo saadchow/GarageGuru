@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import UserManager
 from .forms import PostForm, PhotoForm
+from django.http import HttpResponse
 
 from .models import Post, Photo, Comment, Like, User, UserDescription, Message, UserPhoto
 from .forms import CommentForm
@@ -219,6 +220,7 @@ def bio_updated(request, user_id):
         this_user.save()
         return redirect('profile', user_id=user_id)
 
+
 @login_required
 def user_photo_update(request, user_id):
     if request.method == 'POST':
@@ -228,6 +230,8 @@ def user_photo_update(request, user_id):
             user_photo.image = form.cleaned_data['image']
             user_photo.save()
         else:
-            print(form.errors)  # See error details if invalid
+            print(form.errors)  # Log errors to the Heroku logs
+            # Optionally return errors as HTTP response for debugging
+            return HttpResponse(form.errors, status=400)
     return redirect('profile', user_id=user_id)
 
