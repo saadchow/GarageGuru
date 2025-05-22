@@ -11,9 +11,19 @@
     <div class="row">
             <div class="col s8 m6 offset-s2 offset-m3">
                 <div class="card">
-                    <a href="{% url 'profile' post.user.id %}">
-                        <span class="card-title" style="margin: 0 0 0 10px;">{{post.user.username}}</span>
-                    </a>
+                    <div style="display: flex; align-items: center; margin: 16px 0 0 10px;">
+                        {% with userphoto=post.user.userphoto_set.first %}
+                            {% if userphoto and userphoto.image %}
+                                <img src="{{ userphoto.image.url }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:8px;">
+                            {% else %}
+                                <!-- Optional: Default profile icon if no image exists -->
+                                <img src="{% static 'img/default_profile.png' %}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:8px;">
+                            {% endif %}
+                        {% endwith %}
+                        <a href="{% url 'profile' post.user.id %}" style="font-weight: 600; color: #1565c0;">
+                            {{ post.user.username }}
+                        </a>
+                    </div>
                     <a href="{% url 'detail' post.id %}">
                     <div class="card-image">
                         <img src="">
