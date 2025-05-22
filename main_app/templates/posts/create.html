@@ -1,8 +1,10 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 
 <h1>Add A Post</h1>
-<form action="/posts/create/" method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
   {% csrf_token %}
+
   <p>
     <label for="id_description">Description:</label>
     <textarea
@@ -12,14 +14,13 @@
       maxlength="10000"
       required=""
       id="id_description"
-    ></textarea>
+    >{{ form.description.value }}</textarea>
   </p>
 
-  <label for="id_photo">Photo:</label><br>
-  <input type="file" name="photo-file" required/>
+  <label for="id_image">Photo:</label><br>
+  <input type="file" name="image" id="id_image" required />
   <br /><br />
 
-  <!-- <input type="submit" value="Submit" class="btn" />  -->
   <button class="btn waves-effect waves-light" type="submit" name="action">Submit
     <i class="material-icons right">send</i>
   </button>

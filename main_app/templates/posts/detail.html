@@ -36,7 +36,7 @@
   </div>
 
   {% for photo in post.photo_set.all %}
-    <img class="responsive-img card-panel" src="{{photo.url}}">
+    <img class="responsive-img card-panel" src="{{photo.image.url}}">
     {% if post.user_id == request.user.id %}
     <form action="{% url 'delete_photo' post.id photo.id %}" method="POST">
       {% csrf_token %}

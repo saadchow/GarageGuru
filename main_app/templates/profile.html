@@ -8,7 +8,7 @@
 <div class="row">
     <div class="col s2 card profile-photo"> 
       {% if profile_photo %}
-        <img class="responsive-img" src="{{profile_photo.url}}">
+        <img class="responsive-img" src="{{profile_photo.image.url}}">
       {% else %}
         <div class="card-panel teal-text center-align">No Photo Uploaded</div>
       {% endif %}
@@ -67,7 +67,7 @@
                         <img src="">
                         <!-- <p>image goes here</p> -->
                         {% for photo in post.photo_set.all %}
-                          <img class="responsive-img card-panel" src="{{photo.url}}">
+                          <img class="responsive-img card-panel" src="{{photo.image.url}}">
                         {% empty %}
                           <div class="card-panel teal-text center-align">No Photos Uploaded</div>
                         {% endfor %}
