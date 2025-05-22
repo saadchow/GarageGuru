@@ -52,13 +52,16 @@ def posts_detail(request, post_id):
 
 @login_required
 def add_photo(request, post_id):
-    if request.method == 'POST':
-        form = PhotoForm(request.POST, request.FILES)
-        if form.is_valid():
-            photo = form.save(commit=False)
-            photo.post_id = post_id
-            photo.save()
+    photo_file = request.FILES.get('photo-file', None)
+    if photo_file:
+        # If you use Cloudinary
+        from cloudinary.uploader import upload
+        result = upload(photo_file)
+        url = result['secure_url']
+        Photo.objects.create(image=url, post_id=post_id)  # Adjust this if your model uses FileField/ImageField!
+        print("FILES RECEIVED:", request.FILES)
     return redirect('detail', post_id=post_id)
+
 
 
 @login_required
