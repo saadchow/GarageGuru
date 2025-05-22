@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import UserManager
 from .models import PostForm, PhotoForm
+from .forms import PostForm, PhotoForm
 
 import uuid
 import boto3
@@ -52,17 +53,14 @@ def posts_detail(request, post_id):
 
 @login_required
 def add_photo(request, post_id):
-    photo_file = request.FILES.get('photo-file', None)
-    if photo_file:
-        s3 = boto3.client('s3')
-        key = 'garageguru/' + uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
-        try:
-            s3.upload_fileobj(photo_file, BUCKET, key)
-            url = f"{S3_BASE_URL}{BUCKET}/{key}"
-            Photo.objects.create(url=url, post_id=post_id)
-        except Exception as e:
-            print('An error occurred uploading file to S3:', e)
+    if request.method == 'POST':
+        form = PhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            photo = form.save(commit=False)
+            photo.post_id = post_id
+            photo.save()
     return redirect('detail', post_id=post_id)
+
 
 @login_required
 def delete_photo(request, post_id, photo_id):
@@ -98,26 +96,21 @@ def posts_create(request):
     error_message = ''
     if request.method == 'POST':
         form = PostForm(request.POST)
-        if form.is_valid():
+        photo_form = PhotoForm(request.POST, request.FILES)
+        if form.is_valid() and photo_form.is_valid():
             post = form.save(commit=False)
             post.user = request.user
-            newPost = form.save()
-            # Handle photo upload from 'photo-file'
-            photo_file = request.FILES.get('photo-file')
-            if photo_file:
-                s3 = boto3.client('s3')
-                key = 'garageguru/' + uuid.uuid4().hex[:6] + photo_file.name[photo_file.name.rfind('.'):]
-                try:
-                    s3.upload_fileobj(photo_file, BUCKET, key)
-                    url = f"{S3_BASE_URL}{BUCKET}/{key}"
-                    Photo.objects.create(url=url, post=newPost)
-                except Exception as e:
-                    print('An error occurred uploading file to S3:', e)
-            return redirect('detail', post_id=newPost.id)
+            post.save()
+            photo = photo_form.save(commit=False)
+            photo.post = post
+            photo.save()
+            return redirect('detail', post_id=post.id)
         else:
             error_message = 'Invalid new post'
-    form = PostForm()
-    context = {'form': form, 'error_message': error_message}
+    else:
+        form = PostForm()
+        photo_form = PhotoForm()
+    context = {'form': form, 'photo_form': photo_form, 'error_message': error_message}
     return render(request, 'posts/create.html', context)
 
 class PostUpdate(LoginRequiredMixin, UpdateView):
@@ -227,20 +220,13 @@ def bio_updated(request, user_id):
         this_user.save()
         return redirect('profile', user_id=user_id)
 
+@login_required
 def user_photo_update(request, user_id):
-    user_photo_file = request.FILES.get('user_photo-file', None)
-    if user_photo_file:
-        s3 = boto3.client('s3')
-        key = 'garageguru/' + uuid.uuid4().hex[:6] + user_photo_file.name[user_photo_file.name.rfind('.'):]
-        try:
-            s3.upload_fileobj(user_photo_file, BUCKET, key)
-            url = f"{S3_BASE_URL}{BUCKET}/{key}"
-            if UserPhoto.objects.filter(user_id=user_id).exists():
-                new_photo = UserPhoto.objects.get(user_id=user_id)
-                new_photo.url = url
-                new_photo.save()
-            else:
-                UserPhoto.objects.create(url=url, user_id=user_id)
-        except Exception as e:
-            print('An error occurred uploading file to S3:', e)
+    if request.method == 'POST':
+        form = UserPhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_photo, created = UserPhoto.objects.get_or_create(user_id=user_id)
+            user_photo.image = form.cleaned_data['image']
+            user_photo.save()
     return redirect('profile', user_id=user_id)
+
