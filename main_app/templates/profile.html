@@ -47,7 +47,7 @@
             <!-- <a class="btn" href="{% url 'user_photo_update' user.id %}">Change Profile Picture</a> -->
             <form action="{% url 'user_photo_update' user.id %}" enctype="multipart/form-data" method="POST" class="card-panel">
                 {% csrf_token %}
-                <input type="file" name="image" required>
+                <input type="file" name="image" required>  <!-- Name must match 'image' -->
                 <br><br>
                 <input type="submit" class="btn" value="Change Profile Picture">
             </form>

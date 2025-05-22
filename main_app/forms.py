@@ -14,7 +14,7 @@ class PhotoForm(forms.ModelForm):
 class UserPhotoForm(forms.ModelForm):
     class Meta:
         model = UserPhoto
-        fields = ["image"]
+        fields = ['image']
 
 class CommentForm(forms.ModelForm):
     class Meta:

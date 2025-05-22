@@ -10,9 +10,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import UserManager
 from .forms import PostForm, PhotoForm
 
-import uuid
-import boto3
-
 from .models import Post, Photo, Comment, Like, User, UserDescription, Message, UserPhoto
 from .forms import CommentForm
 
@@ -230,5 +227,7 @@ def user_photo_update(request, user_id):
             user_photo, created = UserPhoto.objects.get_or_create(user_id=user_id)
             user_photo.image = form.cleaned_data['image']
             user_photo.save()
+        else:
+            print(form.errors)  # See error details if invalid
     return redirect('profile', user_id=user_id)
 
