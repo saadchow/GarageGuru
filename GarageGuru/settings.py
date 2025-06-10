@@ -31,7 +31,12 @@ import environ
 environ.Env()
 environ.Env.read_env()
 
+import dj_database_url
 import os
+
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+}
 
 
 # Application definition
