@@ -38,7 +38,6 @@ DATABASES = {
     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -85,14 +84,14 @@ WSGI_APPLICATION = 'GarageGuru.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'garageguru',
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'garageguru',
+#         'USER': os.environ['DB_USER'],
+#         'PASSWORD': os.environ['DB_PASSWORD'],
+#     }
+# }
 
 
 # Password validation
