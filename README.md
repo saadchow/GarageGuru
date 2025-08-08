@@ -58,7 +58,6 @@ GarageGuru was built using the following technologies:
 - <img src="https://www.w3.org/html/logo/downloads/HTML5_Logo_512.png" alt="HTML5 Logo" width="24" height="24"> - HTML
 - <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" alt="CSS3 Logo" width="24" height="24"> - CSS
 - <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" alt= "JavaScript Logo" width= "24" height= "24"> - JavaScript
-- <img src="https://assets.twrd.nl/heroku.png" alt="Heroku Logo" width="62" height="24"> - Heroku
 
 
 
